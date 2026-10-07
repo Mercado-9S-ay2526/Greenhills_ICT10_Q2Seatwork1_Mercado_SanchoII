@@ -1,0 +1,555 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#202824">
+  <title>The Nickname Atlas | A European Field Guide</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://pyscript.net/releases/2026.7.3/core.css">
+  <script type="module" src="https://pyscript.net/releases/2026.7.3/core.js"></script>
+
+  <style>
+    :root {
+      --night: #202824;
+      --night-soft: #29332e;
+      --wine: #783945;
+      --wine-dark: #5c2934;
+      --brass: #c1a16d;
+      --brass-light: #deca9f;
+      --paper: #f2ecdf;
+      --paper-bright: #faf6ec;
+      --ink: #292622;
+      --muted: #797266;
+      --serif: "Cormorant Garamond", Georgia, serif;
+      --sans: "DM Sans", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      color: var(--ink);
+      background: var(--night);
+      font-family: var(--sans);
+    }
+
+    .topbar {
+      height: 62px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 clamp(20px, 5vw, 76px);
+      color: var(--paper);
+      background: var(--night);
+      border-bottom: 1px solid rgba(193, 161, 109, 0.28);
+      font-size: 0.65rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .wordmark {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      font-weight: 700;
+    }
+
+    .wordmark-mark {
+      color: var(--brass-light);
+      font-size: 1.15rem;
+    }
+
+    .edition {
+      color: #c9c1b1;
+    }
+
+    .hero {
+      min-height: calc(100vh - 62px);
+      display: grid;
+      place-items: center;
+      position: relative;
+      overflow: hidden;
+      padding: 66px 24px 78px;
+      background:
+        radial-gradient(ellipse at 50% 45%, rgba(193, 161, 109, 0.11), transparent 54%),
+        linear-gradient(130deg, #202824, #29332e 58%, #202824);
+    }
+
+    .hero::before,
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 420px;
+      height: 420px;
+      border: 1px solid rgba(193, 161, 109, 0.11);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .hero::before {
+      left: -295px;
+      top: 15%;
+      box-shadow:
+        0 0 0 18px rgba(193, 161, 109, 0.025),
+        0 0 0 38px rgba(193, 161, 109, 0.025);
+    }
+
+    .hero::after {
+      right: -295px;
+      bottom: 6%;
+      box-shadow:
+        0 0 0 18px rgba(193, 161, 109, 0.025),
+        0 0 0 38px rgba(193, 161, 109, 0.025);
+    }
+
+    .layout {
+      position: relative;
+      z-index: 1;
+      width: min(1060px, 100%);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      gap: clamp(35px, 7vw, 96px);
+    }
+
+    .intro {
+      padding: 10px 0;
+      color: var(--paper);
+    }
+
+    .kicker {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 0 0 24px;
+      color: var(--brass-light);
+      font-size: 0.67rem;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+    }
+
+    .kicker::before {
+      content: "";
+      width: 32px;
+      height: 1px;
+      background: var(--brass);
+    }
+
+    h1 {
+      margin: 0;
+      font: 500 clamp(4.5rem, 8.5vw, 7.4rem)/0.78 var(--serif);
+      letter-spacing: -0.055em;
+    }
+
+    h1 span {
+      display: block;
+      margin: 12px 0 0 48px;
+      color: var(--brass-light);
+      font-style: italic;
+      font-weight: 400;
+    }
+
+    .intro-copy {
+      max-width: 370px;
+      margin: 35px 0 0;
+      color: #d0c9bb;
+      font: 400 1.28rem/1.4 var(--serif);
+    }
+
+    .intro-rule {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 160px;
+      margin: 34px 0 0;
+      color: var(--brass);
+    }
+
+    .intro-rule::before,
+    .intro-rule::after {
+      content: "";
+      height: 1px;
+      flex: 1;
+      background: rgba(193, 161, 109, 0.48);
+    }
+
+    .intro-rule span {
+      font-size: 0.9rem;
+    }
+
+    .index-note {
+      margin-top: 35px;
+      color: #aaa393;
+      font-size: 0.63rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .index-note strong {
+      color: var(--brass-light);
+      font-weight: 500;
+    }
+
+    .panel-wrap {
+      position: relative;
+      padding: 11px;
+      background: var(--brass);
+      box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3);
+    }
+
+    .panel-wrap::before {
+      content: "";
+      position: absolute;
+      inset: 5px;
+      border: 1px solid rgba(32, 40, 36, 0.4);
+      pointer-events: none;
+    }
+
+    .panel {
+      position: relative;
+      padding: clamp(28px, 4vw, 48px);
+      background: var(--paper-bright);
+    }
+
+    .panel-heading {
+      margin: 0;
+      color: var(--wine);
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    .panel-title {
+      margin: 9px 0 0;
+      font: 600 2.65rem/0.95 var(--serif);
+      letter-spacing: -0.025em;
+    }
+
+    .panel-description {
+      margin: 12px 0 29px;
+      color: var(--muted);
+      font-size: 0.81rem;
+      line-height: 1.65;
+    }
+
+    label {
+      display: block;
+      margin: 0 0 9px;
+      color: #4a433b;
+      font-size: 0.66rem;
+      font-weight: 700;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .select-shell {
+      position: relative;
+    }
+
+    .select-shell::after {
+      content: "⌄";
+      position: absolute;
+      top: 50%;
+      right: 17px;
+      transform: translateY(-58%);
+      color: var(--wine);
+      font-size: 1.2rem;
+      pointer-events: none;
+    }
+
+    select {
+      width: 100%;
+      height: 54px;
+      appearance: none;
+      padding: 0 43px 0 15px;
+      border: 1px solid #cfc3ad;
+      border-radius: 0;
+      color: var(--ink);
+      background: #fffdf8;
+      font: 400 0.88rem var(--sans);
+    }
+
+    select:focus {
+      border-color: var(--wine);
+      outline: 2px solid rgba(120, 57, 69, 0.16);
+      outline-offset: 1px;
+    }
+
+    .hint {
+      margin: 10px 0 22px;
+      color: #82796d;
+      font-size: 0.71rem;
+    }
+
+    .reveal {
+      width: 100%;
+      min-height: 55px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      border: 1px solid var(--wine-dark);
+      color: #fffaf1;
+      background: var(--wine);
+      cursor: pointer;
+      font: 700 0.67rem var(--sans);
+      letter-spacing: 0.17em;
+      text-transform: uppercase;
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+    }
+
+    .reveal:hover {
+      transform: translateY(-2px);
+      background: var(--wine-dark);
+      box-shadow: 0 8px 20px rgba(92, 41, 52, 0.22);
+    }
+
+    .reveal:focus-visible {
+      outline: 3px solid var(--brass);
+      outline-offset: 3px;
+    }
+
+    .reveal span {
+      color: var(--brass-light);
+      font-size: 1rem;
+    }
+
+    #result {
+      min-height: 35px;
+      margin-top: 21px;
+      color: var(--wine-dark);
+      font: 600 1.35rem/1.2 var(--serif);
+      text-align: center;
+    }
+
+    .panel-foot {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 16px;
+      color: #887e6e;
+      font-size: 0.59rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .panel-foot::before,
+    .panel-foot::after {
+      content: "";
+      height: 1px;
+      flex: 1;
+      background: #ded4c2;
+    }
+
+    .site-footer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      padding: 15px 20px;
+      color: #d3c4a5;
+      background: rgba(20, 26, 23, 0.72);
+      border-top: 1px solid rgba(193, 161, 109, 0.25);
+      text-align: center;
+      font-size: 0.62rem;
+      letter-spacing: 0.12em;
+    }
+
+    .site-footer p {
+      margin: 0;
+    }
+
+    @media (max-width: 760px) {
+      .hero {
+        min-height: auto;
+        padding: 52px 22px 100px;
+      }
+
+      .layout {
+        width: min(520px, 100%);
+        grid-template-columns: 1fr;
+        gap: 36px;
+      }
+
+      .intro {
+        text-align: center;
+      }
+
+      .kicker,
+      .intro-rule {
+        justify-content: center;
+        margin-right: auto;
+        margin-left: auto;
+      }
+
+      h1 {
+        font-size: clamp(4.3rem, 17vw, 6rem);
+      }
+
+      h1 span {
+        margin-left: 30px;
+      }
+
+      .intro-copy {
+        margin: 24px auto 0;
+      }
+
+      .index-note {
+        margin-top: 20px;
+      }
+    }
+
+    @media (max-width: 440px) {
+      .topbar {
+        height: 56px;
+        font-size: 0.55rem;
+        letter-spacing: 0.12em;
+      }
+
+      .edition {
+        font-size: 0.5rem;
+      }
+
+      .hero {
+        padding: 40px 18px 95px;
+      }
+
+      .panel {
+        padding: 28px 22px;
+      }
+
+      .panel-title {
+        font-size: 2.35rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="wordmark">
+      <span class="wordmark-mark" aria-hidden="true">✦</span>
+      The Society of Names
+    </div>
+    <div class="edition">European Field Guide · No. 01</div>
+  </header>
+
+  <main class="hero">
+    <div class="layout">
+      <section class="intro" aria-labelledby="page-title">
+        <p class="kicker">A little European lore</p>
+        <h1 id="page-title">The <span>Nickname</span> Atlas</h1>
+        <p class="intro-copy">
+          A collection of the names, sayings, and small stories that make each place feel like home.
+        </p>
+        <div class="intro-rule" aria-hidden="true"><span>❧</span></div>
+        <p class="index-note"><strong>51 destinations</strong> · One curious journey</p>
+      </section>
+
+      <section class="panel-wrap" aria-labelledby="discover-title">
+        <div class="panel">
+          <p class="panel-heading">Turn to a new page</p>
+          <h2 class="panel-title" id="discover-title">Where shall we begin?</h2>
+          <p class="panel-description">
+            Choose a country and discover the nickname tucked inside its story.
+          </p>
+
+          <label for="country">Select a country</label>
+          <div class="select-shell">
+            <select id="country" name="country">
+              <option value="">Choose a country</option>
+              <option>Albania</option>
+              <option>Andorra</option>
+              <option>Armenia</option>
+              <option>Austria</option>
+              <option>Azerbaijan</option>
+              <option>Belarus</option>
+              <option>Belgium</option>
+              <option>Bosnia and Herzegovina</option>
+              <option>Bulgaria</option>
+              <option>Croatia</option>
+              <option>Cyprus</option>
+              <option>Czechia</option>
+              <option>Denmark</option>
+              <option>Estonia</option>
+              <option>Finland</option>
+              <option>France</option>
+              <option>Georgia</option>
+              <option>Germany</option>
+              <option>Greece</option>
+              <option>Hungary</option>
+              <option>Iceland</option>
+              <option>Ireland</option>
+              <option>Italy</option>
+              <option>Kazakhstan</option>
+              <option>Kosovo</option>
+              <option>Latvia</option>
+              <option>Liechtenstein</option>
+              <option>Lithuania</option>
+              <option>Luxembourg</option>
+              <option>Malta</option>
+              <option>Moldova</option>
+              <option>Monaco</option>
+              <option>Montenegro</option>
+              <option>Netherlands</option>
+              <option>North Macedonia</option>
+              <option>Norway</option>
+              <option>Poland</option>
+              <option>Portugal</option>
+              <option>Romania</option>
+              <option>Russia</option>
+              <option>San Marino</option>
+              <option>Serbia</option>
+              <option>Slovakia</option>
+              <option>Slovenia</option>
+              <option>Spain</option>
+              <option>Sweden</option>
+              <option>Switzerland</option>
+              <option>Turkey</option>
+              <option>Ukraine</option>
+              <option>United Kingdom</option>
+              <option>Vatican City</option>
+            </select>
+          </div>
+
+          <p class="hint">Your next discovery is only a page turn away.</p>
+
+          <button class="reveal" type="button" py-click="reveal_nickname">
+            <span aria-hidden="true">✧</span>
+            Reveal nickname
+            <span aria-hidden="true">✧</span>
+          </button>
+
+          <div id="result" aria-live="polite"></div>
+          <div class="panel-foot">Collected with affection</div>
+        </div>
+      </section>
+    </div>
+
+    <footer class="site-footer">
+      <p>Nickname Atlas — 2nd Quarter Seatwork 1</p>
+    </footer>
+  </main>
+
+  <script type="py" src="./main.py"></script>
+</body>
+</html>
